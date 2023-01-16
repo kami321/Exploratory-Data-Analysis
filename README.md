@@ -72,12 +72,74 @@ Permutation test result for Fall (Sep - Nov)  vs. Summer (Jun - Aug) :[1] 2e-04
 
 ![unnamed-chunk-13-3](https://user-images.githubusercontent.com/81647911/212740561-73ec5a02-ddc2-47f3-8865-5290ff2bff5f.png)
 
-
+Permutation test result for Fall (Sep - Nov)  vs. Winter (Dec - Feb) :[1] 2e-04
 
 ![unnamed-chunk-13-4](https://user-images.githubusercontent.com/81647911/212740562-0bb4e755-253b-49f4-bbc2-1899ecb479bb.png)
 
-
+Permutation test result for Spring (Mar - May)  vs. Summer (Jun - Aug) :[1] 2e-04
 
 ![unnamed-chunk-13-5](https://user-images.githubusercontent.com/81647911/212740567-0f048c87-763a-4472-b987-bae57b2e6e1c.png)
 
+Permutation test result for Spring (Mar - May)  vs. Winter (Dec - Feb) :[1] 0.0076
 
+![unnamed-chunk-13-6](https://user-images.githubusercontent.com/81647911/212740889-738a4298-f26e-4579-8347-7524e4c47d90.png)
+
+Permutation test result for Summer (Jun - Aug)  vs. Winter (Dec - Feb) :[1] 2e-04
+
+We can determine from the graphs that the simulated mean is normally distributed around 0. The observed values are distant from the generated distribution, indicating that we seldom attain an observed mean when randomly classifying different season throughout the year. All of our P-values are as low as 2e-04 = 0.0002, however one exchange instance involving Spring and Winter varies from the others with a higher P-value = 0.0078. We could infer that there is a significant difference between the means of departure delays for the different time periods of the year since the P-values are all less than 5%, therefore we reject the null hypothesis and endorse the alternative hypothesis.
+
+### 3. Does the visibility affect departure delay?
+
+![unnamed-chunk-17-1](https://user-images.githubusercontent.com/81647911/212740892-629d2d5c-c539-4bed-b5db-5a2614a9a1b0.png)
+
+We can observe from the graphs above that the average departure delay time increase with the lower visibility. This demonstrates how weather conditions like visibility affect flights in New York City. Next we will calculate the permutation test result as well as the low visibility and high visibility.
+
+Permutation test result: [1] 1e-04
+
+Low visibility mean result: [1] 11.74591
+
+High visibility mean result: [1] 17.89801
+
+The observed values indicating that we observed the permutation test mean result 1e-04 = 0.0001, and the mean between Low visibility and High visibility are 11.74591 and 17.89801. We could infer that there is a significant difference between the means of departure delays for the different visibility, since the P-values are all less than 5%, therefore we reject the null hypothesis and endorse the alternative hypothesis.
+
+### 4. Does the wind speed affect departure delay?
+
+![unnamed-chunk-21-1](https://user-images.githubusercontent.com/81647911/212740893-4c7add27-39e4-48de-aed5-94e27048fe28.png)
+
+Here, we can observe from grouped base on the grouped wind speeds and calculated the average departure delay time for each wind speed value (since only specific wind speed values were observed in the dataset, it is actually a continuous variable). The graph above shows that as the wind speed increases, a small increase in the average departure delay time occurs. Next we will calculate the permutation test result as well as the low wind speeds and high wind speeds.
+
+Permutation test result: [1] 0.3839
+
+Low wind speed standard deviation result: [1] 36.39903
+
+High wind speed standard deviation result: [1] 34.79615
+
+The observed values indicating that we observed the permutation test standard deviation result 0.385, and the standard deviation between Low wind speed and High wind speed are 36.39903 and 34.79615. We could infer that there is not statistically significant, since the P-values are all greater than 5% which indicating the difference between the standard deviation of departure delays for the different wind speed.
+
+### 5. Does the weather temperature affect departure delay?
+
+![unnamed-chunk-24-1](https://user-images.githubusercontent.com/81647911/212740895-3c7f7fab-5f96-4557-91e9-092c91b53f65.png)
+
+We can observe from the graphs above that the average departure delay time increase with the temperature increase. This demonstrates how weather conditions like visibility affect flights in New York City. Next we will calculate the permutation test result as well as the low temperature and high temperature.
+
+Permutation test result: [1] 1e-04
+
+Low temperature mean result: [1] 15.82985
+
+High temperature mean result: [1] 10.10027
+
+The observed values indicating that we observed the permutation test mean result 1e-04 = 0.0001, and the mean between Low temperature and High temperature are 15.82985 and 10.10027. We could infer that there is a significant difference between the means of departure delays for the different visibility, since the P-values are all less than 5%, therefore we reject the null hypothesis and endorse the alternative hypothesis.
+
+### 6. Does the precipitation affect departure delay?
+
+![unnamed-chunk-27-1](https://user-images.githubusercontent.com/81647911/212740896-0f91f420-4aa3-48f3-bf49-e2b706536417.png)
+
+We can observe from the graphs above that the average departure delay time increase with the precipitation increase. This demonstrates how weather conditions like precipitation affect flights in New York City. Next we will calculate the permutation test result as well as the low precipitation and high precipitation.
+
+Permutation test result: [1] 1e-04
+
+Low precipitation median result: [1] 9
+
+High precipitation median result: [1] 0
+
+The observed values indicate that we observed the permutation test median result 1e-04 = 0.0001, and the mean between Low precipitation and High precipitation are 9 and 0. We could infer that there is a significant difference between the median of departure delays for the different precipitation, since the P-values are all less than 5%, therefore we reject the null hypothesis and endorse the alternative hypothesis.
