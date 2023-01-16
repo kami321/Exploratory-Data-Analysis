@@ -1,0 +1,146 @@
+---
+title: 'Project #1 Exploratory Data Analysis'
+author: "Yinhui Yang"
+date: "10/29/2022"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(nycflights13)
+library(tidyverse)
+library(lubridate)
+library(knitr)
+library(mosaic)
+library(gridExtra)
+library(reshape2)
+library(GGally)
+```
+
+# Airline Departure Delay Reasons, Distributions and Trends
+
+## Introduction
+Airline delays it might cause a lot of inconvenient. Customer would not wants to waste precious vocation or work time by waiting for hours at a busy airport. That is the purpose for this exploratory data analysis on this United Airlines (carrier code UA) dataset. Mainly focus to improve both efficiency and customer satisfaction.
+
+In this study, I would find out what causes departure/arrival delays. Are delays growing better or worse with different time of the day? Is any time of the year like November and December the worst months to fly because of holiday travel, the vocation season, and the unpredictable winter weather? Does the wind speed, precipitation, and visibility affect airplane ability to arrive on time? 
+
+## Background Information on the datasets
+The nycflights13 package it contains on-time information data for all flights that departed NYC (i.e. JFK, LGA or EWR) in the year of 2013.
+
+Goal: to use exploratory data analysis methods that we have been studying, and permutation tests, to analyze departure delays with a unique carriers United Airlines (carrier code UA) 
+
+### 1. Are delays growing better or worse with different time of the day?
+```{r}
+# Load different data from the nycflights13 library
+flights <- flights
+weather <- weather
+```
+
+```{r}
+flightsUA <- flights %>%
+  filter(carrier == "UA")
+```
+
+```{r}
+flightsUA <- flightsUA %>% drop_na(dep_delay)
+flightsUA <- flightsUA %>% drop_na(sched_dep_time)
+```
+
+```{r}
+flightsUA <- flightsUA %>%
+  mutate(flightsUA, time_of_day = ifelse(sched_dep_time %in% 600:1159, "Morning",
+                                  ifelse(sched_dep_time %in% 1200:1759, "Afternoon",
+                                  ifelse(sched_dep_time %in% 1800:2359, "Evening", "Night"))))
+```
+
+
+```{r}
+# Histogram of the departure delay distribution of flights 
+ggplot(flightsUA, mapping = aes(x=dep_delay)) + 
+geom_histogram(bins = 30) +
+geom_vline(xintercept = mean(flightsUA$dep_delay), color = "blue") +
+labs(title = "Histogram of Departure Delay", x = "Departure Delay (in minutes)", y = "Total Counts")
+```
+
+The data is skewed to the right, with a mean departure delay of roughly 10 minutes. We can also notice some negative numbers, which signify both early departures and exceptionally long departure delays.
+```{r, warning=FALSE}
+ggplot(flightsUA, aes(x = flightsUA$dep_delay, y = c(flightsUA$time_of_day))) +
+  geom_boxplot()+
+  labs(x = "Departure delay", y = "Time of day", title = "Distribution of Departure Delay during a day")
+  xlim(-50,200)
+```
+We can observe from the above boxplots that the median departure delay is nearly the same for all times of the day, which is around 0 with some outliers. The IQR in the evening is higher. So we could see there is early departures are more common in the morning and at night. To investigate if there is a relationship between departure delays and time of day, we will do two-sided permutation tests. The null hypothesis is that there is no difference in departure delays. The alternative theory is that there is a genuine difference between different times of the day.
+```{r, warning=FALSE}
+N <- 10^4-1
+result <- numeric(N)
+Day = c("Morning", "Afternoon", "Evening", "Night")
+
+# Loop function
+for(i in 1:length(Day))
+{
+  for(j in 1:length(Day))
+    {
+    if(j < 4 & i <= j)
+      {
+      C1 = (Day[i])
+      C2 = (Day[j+1])
+      # Reduce the flightsUS dataset
+      Red_flights <- flightsUA %>% 
+        filter(time_of_day == C1 | time_of_day == C2)
+      sample.size = nrow(Red_flights)
+      group.1.size = nrow(Red_flights[Red_flights$time_of_day == C1,])
+      # Calculation observed value
+      observed <- mean(Red_flights$dep_delay[Red_flights$time_of_day == C1]) - mean(Red_flights$dep_delay[Red_flights$time_of_day == C2])
+
+      # For loop to cycle values k rang from 1 to N
+      for(k in 1:N)
+        {
+        index = sample(sample.size,group.1.size, replace = FALSE)
+        result[k] = mean(Red_flights$dep_delay[index]) - mean(Red_flights$dep_delay[-index])
+        }
+      # Histograms
+      print(ggplot(tibble(result), mapping = aes(x = result)) +
+        geom_histogram() +
+        geom_vline(xintercept = observed, color = "blue"))
+      # Permutation test result
+      if(observed > 0)
+        {
+        cat("Permutation test result for",C1," vs.",C2,":")
+        print(P_value <- 2*(sum(result >= observed) + 1)/(N + 1))
+        }else{
+        cat("Permutation test result for",C1," vs.",C2,":")
+        print(P_value <- 2*(sum(result <= observed) + 1)/(N + 1))
+      }
+    }
+  }
+}
+```
+We can determine from the graphs that the simulated mean is normally distributed around 0. The observed values are distant from the generated distribution, indicating that we seldom attain an observed mean when randomly classifying different kinds throughout the day. All of our P-values are as low as 2e-04 = 0.0002, however one exchange instance involving morning and evening varies from the others with a higher P-value = 0.0022. We could infer that there is a significant difference between the means of departure delays for the different time periods of the day since the P-values are all less than 5%, therefore we reject the null hypothesis and endorse the alternative hypothesis.
+
+```{r}
+df <- flights %>%
+  inner_join(weather, by = c('origin', 'time_hour'))
+str(df)
+dim(df)
+unique(df$year.x)
+dfNA<-na.omit(df)
+#335,220 down to 72,734. 
+```
+
+```{r}
+UA <- df %>%
+  mutate(year = lubridate::year(time_hour), month = lubridate::month(time_hour), hour = lubridate::hour(time_hour)) %>%
+  select(carrier, dep_delay, year, month, hour, temp, wind_speed, precip, visib) %>%
+  filter(carrier == 'UA')
+```
+
+```{r}
+names(UA)
+head(UA, 10)
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
